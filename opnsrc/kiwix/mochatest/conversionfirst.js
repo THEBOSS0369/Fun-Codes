@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import * as chai from 'chai';
-import * as util from '../../../www/js/lib/util.js';
 import * as uiUtil from '../../../www/js/lib/uiUtil.js';
+import util from '../../../www/js/lib/util.js';
 
 import ZIMDirEntryModule from '../../../www/js/lib/zimDirEntry.js';
 import ZIMArchiveModule from '../../../www/js/lib/zimArchive.js';
@@ -17,6 +17,11 @@ describe('Environment Setup', () => {
 });
 
 describe('Utility Functions', () => {
+    // it('should read an IEEE_754 float from 4 bytes', () => {
+    //     const byteArray = new Uint8Array([194, 237, 64, 0]);
+    //     const float = util.readFloatFrom4Bytes(byteArray, 0);
+    //     expect(float).to.equal(-118.625);
+    // });
     it('should read an IEEE_754 float from 4 bytes', () => {
         const byteArray = new Uint8Array([194, 237, 64, 0]);
         const float = util.readFloatFrom4Bytes(byteArray, 0);
