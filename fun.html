@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Mouse position
+        let mouse = {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        };
+        canvas.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        // Particle class
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = `hsl(${Math.random() * 360}, 70%, 50%)`;
+            }
+
+            update() {
+                // Move particle
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Mouse interaction
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < 100) {
+                    const angle = Math.atan2(dy, dx);
+                    this.speedX -= Math.cos(angle) * 0.2;
+                    this.speedY -= Math.sin(angle) * 0.2;
+                }
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+                // Add some randomness
+                this.speedX += (Math.random() - 0.5) * 0.1;
+                this.speedY += (Math.random() - 0.5) * 0.1;
+
+                // Limit speed
+                const maxSpeed = 4;
+                const speed = Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY);
+                if (speed > maxSpeed) {
+                    this.speedX = (this.speedX / speed) * maxSpeed;
+                    this.speedY = (this.speedY / speed) * maxSpeed;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        // Create particle array
+        const particles = Array(50).fill().map(() => new Particle());
+
+        // Animation loop
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
